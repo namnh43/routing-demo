@@ -5,10 +5,15 @@ import Swal from "sweetalert2";
 
 export function ListStudent() {
     const [students, setStudents] = useState([]);
+    const [valid, setValid] = useState(true);
 
     useEffect(() => {
         axios.get("http://localhost:8080/api/students/v1").then((response) => {
+            setValid(true);
             setStudents(response.data)
+        }).catch(reason => {
+            setValid(false);
+            setStudents([]);
         })
     },[])
     useEffect(() => {
@@ -46,12 +51,14 @@ export function ListStudent() {
 
     return (
         <>
-            <table className="table table-striped">
+            {valid &&
+            (<table className="table table-striped">
                 <thead>
                 <tr>
                     <th>#</th>
                     <th>Name</th>
                     <th>Description</th>
+                    <th>Category</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -64,7 +71,8 @@ export function ListStudent() {
                             </td>
                             <td>{item.name}</td>
                             <td>{item.description}</td>
-                            <td><button onClick={() => {
+                            <td>{item.studentCategory.type}</td>
+                            <td><button className="btn btn-danger" onClick={() => {
                                 handleDelete(item.id)
                             }
                             }>Delete</button></td>
@@ -72,7 +80,9 @@ export function ListStudent() {
                     )
                 })}
                 </tbody>
-            </table>
+            </table>)}
+            {!valid &&
+            <h6 style={{textAlign:"left"}}>Can't load data, please check your API!!!</h6>}
         </>
     )
 }
