@@ -2,7 +2,7 @@ export function Footer() {
     return (
         <>
             <hr/>
-            <h1>Footer</h1>
+            <h6 style={{textAlign:"center"}}>@mr nam</h6>
         </>
     )
 }

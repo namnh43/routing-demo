@@ -2,24 +2,30 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";
 import Swal from "sweetalert2";
+import {useDispatch, useSelector} from "react-redux";
 
 export function ListStudent() {
     const [students, setStudents] = useState([]);
     const [valid, setValid] = useState(true);
+    const searchValue = useSelector((state) => {
+        return state.search.textSearch
+    });
 
-    useEffect(() => {
-        axios.get("http://localhost:8080/api/students/v1").then((response) => {
+    useEffect( () => {
+        console.log('re-render ...')
+        let url = "http://localhost:8080/api/students/v1";
+        if (searchValue != '') {
+            url += "/search?name="+searchValue;
+        }
+        console.log('url ',url)
+        axios.get(url).then(async (response) => {
             setValid(true);
             setStudents(response.data)
         }).catch(reason => {
             setValid(false);
             setStudents([]);
         })
-    },[])
-    useEffect(() => {
-        console.log('1',students);
-    })
-
+    },[searchValue])
     const handleDelete = (id) => {
         Swal.fire({
             title: 'Are you sure?',
