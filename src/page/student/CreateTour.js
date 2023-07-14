@@ -7,39 +7,36 @@ import * as Yup from "yup";
 import {useEffect, useState} from "react";
 
 const validSchema = Yup.object().shape({
-    name: Yup.string()
+    title: Yup.string()
         .min(3, ">3 chars")
         .max(15, "<15 chars")
         .required("Required!"),
-    desc: Yup.string()
+    price: Yup.number()
+        .required(),
+    description: Yup.string()
         .optional()
 });
 
-export function CreateStudent() {
+export function CreateTour() {
     const navigate = useNavigate();
-    const [category, setCategory] = useState([]);
-    const [studentCategory,setStudentCategory] = useState()
     useEffect(() => {
         //query list category
-        axios.get("http://localhost:8080/api/category/v1").then((response) => {
-            let categoryList = response.data.map((element, key) => {
-                return {label: element.type, value: element.type};
-            })
-            setCategory(categoryList);
-        })
+
     }, [])
+    const handleCancel = () => {
+        navigate('/tours')
+    }
     return (
         <>
             <Formik
                 initialValues={{
-                    name: '',
-                    desc: ''
+                    title: '',
+                    price: '',
+                    description: ''
                 }}
                 onSubmit={(values) => {
                     console.log('values', values)
-                    values.description = values.desc; //update dong bo voi backend
-                    values.studentCategory = {id: isNaN(studentCategory.id) ? 0 : studentCategory.id, type: studentCategory.type}
-                    axios.post('http://localhost:8080/api/students/v1/add', values).then(() => {
+                    axios.post('http://localhost:3000/tuors', values).then(() => {
                             Swal.fire({
                                 position: 'center',
                                 icon: 'success',
@@ -49,7 +46,7 @@ export function CreateStudent() {
                             })
                         }
                     ).then(() => {
-                        setTimeout(() => navigate('/'), 1500)
+                        setTimeout(() => navigate('/tours'), 1500)
                     }).catch((reason) => {
                         console.log('error', reason)
                     })
@@ -65,28 +62,24 @@ export function CreateStudent() {
                             <td><Field name={'id'}></Field></td>
                         </tr>
                         <tr>
-                            <th>Name:</th>
-                            <td><Field name={'name'}></Field></td>
+                            <th>Tên tour:</th>
+                            <td><Field name={'title'}></Field></td>
                             <span style={{color:"red"}}><ErrorMessage className={"text-bg-danger"} name={'name'}/></span>
                         </tr>
                         <tr>
-                            <th>Description:</th>
-                            <td><Field name={'desc'}></Field></td>
-                            <span style={{color:"red"}}><ErrorMessage name={'desc'}/></span>
+                            <th>Giá:</th>
+                            <td><Field name={'price'}></Field></td>
+                            <span style={{color:"red"}}><ErrorMessage name={'price'}/></span>
                         </tr>
                         <tr>
-                            <th>Category:</th>
-                            <Creatable
-                                value={studentCategory && {label:studentCategory.type,value:studentCategory.id}}
-                                options={category}
-                                onChange={(opt, meta) => {
-                                    setStudentCategory({id:opt.value,type:opt.label})
-                                }}
-                            />
+                            <th>Mô tả:</th>
+                            <td><Field name={'description'}></Field></td>
+                            <span style={{color:"red"}}><ErrorMessage name={'description'}/></span>
                         </tr>
                         </tbody>
                     </table>
-                    <button className='btn btn-primary'>Update</button>
+                    <button className='btn btn-primary mt-2'>Thêm mới</button>
+                    <button className='btn btn-primary ms-2 mt-2' onClick={handleCancel}>Hủy</button>
                 </Form>
             </Formik>
         </>
