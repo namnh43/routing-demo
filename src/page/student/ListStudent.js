@@ -17,7 +17,6 @@ export function ListStudent() {
         if (searchValue != '') {
             url += "/search?name="+searchValue;
         }
-        console.log('url ',url)
         axios.get(url).then(async (response) => {
             setValid(true);
             setStudents(response.data)
@@ -69,7 +68,7 @@ export function ListStudent() {
                 </tr>
                 </thead>
                 <tbody>
-                {students.map((item,key) => {
+                {students.reverse().map((item,key) => {
                     return (
                         <tr>
                             <td>
